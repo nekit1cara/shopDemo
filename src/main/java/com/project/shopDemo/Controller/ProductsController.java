@@ -1,7 +1,7 @@
 package com.project.shopDemo.Controller;
 
 import com.project.shopDemo.Entity.Products;
-import com.project.shopDemo.Service.ProductsServiceImpl;
+import com.project.shopDemo.Service.Impl.ProductsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -59,9 +59,16 @@ public class ProductsController {
         return productsServiceImpl.updateProductById(productId, product);
     }
 
+    @PutMapping("/update-product/status")
+    public ResponseEntity<?> updateProductStatus(@RequestParam("productId") Long productId,
+                                                 @RequestParam boolean status) {
+        return productsServiceImpl.updateProductStatus(productId,status);
+    }
+
     @DeleteMapping("/delete-product/{productId}")
     public ResponseEntity<?> deleteProduct(@PathVariable Long productId) {
         return productsServiceImpl.deleteProductById(productId);
     }
+
 
 }

@@ -1,4 +1,4 @@
-package com.project.shopDemo.Service;
+package com.project.shopDemo.Service.Impl;
 
 import com.project.shopDemo.Entity.Carts;
 import com.project.shopDemo.Entity.CartsItems;
@@ -9,6 +9,7 @@ import com.project.shopDemo.ExceptionHandler.Exceptions.ProductOutOfStockExcepti
 import com.project.shopDemo.Repository.CartRepository;
 import com.project.shopDemo.Repository.CartsItemsRepository;
 import com.project.shopDemo.Repository.ProductsRepository;
+import com.project.shopDemo.Service.CartsItemsService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,7 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CartsItemsServiceImpl {
+public class CartsItemsServiceImpl implements CartsItemsService {
 
     public CartsItemsRepository cartsItemsRepository;
     public ProductsRepository productsRepository;
@@ -31,7 +32,7 @@ public class CartsItemsServiceImpl {
         this.cartsRepository = cartsRepository;
     }
 
-
+    @Override
     public ResponseEntity<?> addItemInCart(HttpSession session, CartsItems cartsItem) {
 
         Carts cart = getOrCreateCart(session);
@@ -57,6 +58,10 @@ public class CartsItemsServiceImpl {
 
         assert product != null;
 
+        if (!product.isProductStatus()) {
+            throw new ProductOutOfStockException("Product not available now.");
+        }
+
         if (cartsItem.getQuantity() > product.getProductQuantity()) {
             throw new ProductOutOfStockException("Product : " + product.getId() + " out of stock.");
         }
@@ -77,6 +82,7 @@ public class CartsItemsServiceImpl {
 
     }
 
+    @Override
     public ResponseEntity<?> deleteProductFromCart(HttpSession session, Long productId) {
 
         Carts cart = getOrCreateCart(session);
@@ -94,6 +100,7 @@ public class CartsItemsServiceImpl {
         }
     }
 
+    @Override
     public ResponseEntity<?> clearCart(HttpSession session) {
         Carts cart = getOrCreateCart(session);
         cartsItemsRepository.deleteAll(cart.getCartsItems());
@@ -101,12 +108,7 @@ public class CartsItemsServiceImpl {
     }
 
 
-
-
-
-
-
-    //Получить саму корзину или же если её нету то создать и показать
+    @Override
     public Carts getOrCreateCart(HttpSession session) {
 
         String sessionId = session.getId();

@@ -1,9 +1,10 @@
-package com.project.shopDemo.Service;
+package com.project.shopDemo.Service.Impl;
 
 import com.project.shopDemo.Entity.*;
 import com.project.shopDemo.ExceptionHandler.Exceptions.CartNotFoundException;
 import com.project.shopDemo.ExceptionHandler.Exceptions.OrderNotFoundException;
 import com.project.shopDemo.Repository.*;
+import com.project.shopDemo.Service.OrdersService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class OrdersServiceImpl {
+public class OrdersServiceImpl implements OrdersService {
 
     public CartsItemsRepository cartsItemsRepository;
     public CartRepository cartRepository;
@@ -37,7 +38,7 @@ public class OrdersServiceImpl {
         this.cartsItemsRepository = cartsItemsRepository;
     }
 
-
+    @Override
     public ResponseEntity<?> getOrdersBySession(HttpSession session) {
 
         List<Orders> orders = getOrders(session);
@@ -50,6 +51,7 @@ public class OrdersServiceImpl {
 
     }
 
+    @Override
     public Optional<Orders> getOrderBySessionAndOrderId(HttpSession session, Long orderId) {
 
         Optional<Orders> order = ordersRepository.findById(orderId);
@@ -63,6 +65,7 @@ public class OrdersServiceImpl {
         return getOrder(session, orderId);
     }
 
+    @Override
     public ResponseEntity<?> createOrder(HttpSession session, @RequestBody Orders order) {
 
         Carts cart = getOrCreateCart(session);
@@ -105,6 +108,7 @@ public class OrdersServiceImpl {
 
     }
 
+    @Override
     public ResponseEntity<?> applyOrder(HttpSession session, Long orderId) {
 
         Optional<Orders> order = getOrder(session, orderId);
@@ -135,7 +139,8 @@ public class OrdersServiceImpl {
 
 
     ////////////////////////////////// ///////////////// ///////////////// ///////////////// ///////////////// ///////////////// /////////////////
-    private List<Orders> getOrders(HttpSession session) {
+    @Override
+    public List<Orders> getOrders(HttpSession session) {
 
         String sessionId = session.getId();
             //return  ordersRepository.findBySessionId(sessionId);
@@ -143,12 +148,14 @@ public class OrdersServiceImpl {
 
     }
 
-    private Optional<Orders> getOrder(HttpSession session, Long orderId) {
+    @Override
+    public Optional<Orders> getOrder(HttpSession session, Long orderId) {
         String sessionId = session.getId();
             return ordersRepository.findBySessionIdAndId(sessionId,orderId);
     }
 
-    private int calculateOrderTotalPrice(Carts cart) {
+    @Override
+    public int calculateOrderTotalPrice(Carts cart) {
 
         // Возвращаем список всех товаров в корзине как поток (Stream) объектов.
         return cart.getCartsItems().stream()
@@ -165,7 +172,8 @@ public class OrdersServiceImpl {
 
     }
 
-    private Carts getOrCreateCart(HttpSession session) {
+    @Override
+    public Carts getOrCreateCart(HttpSession session) {
         String sessionId = session.getId();
 
             return cartRepository.findBySessionId(sessionId).orElseGet(() -> {

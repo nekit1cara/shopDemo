@@ -1,7 +1,7 @@
 package com.project.shopDemo.Controller;
 
 import com.project.shopDemo.Entity.Orders;
-import com.project.shopDemo.Service.OrdersServiceImpl;
+import com.project.shopDemo.Service.Impl.OrdersServiceImpl;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

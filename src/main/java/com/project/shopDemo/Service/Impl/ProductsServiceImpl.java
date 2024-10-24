@@ -1,9 +1,10 @@
-package com.project.shopDemo.Service;
+package com.project.shopDemo.Service.Impl;
 
 import com.project.shopDemo.Entity.Products;
 import com.project.shopDemo.ExceptionHandler.Exceptions.ProductAlreadyExistException;
 import com.project.shopDemo.ExceptionHandler.Exceptions.ProductNotFoundException;
 import com.project.shopDemo.Repository.ProductsRepository;
+import com.project.shopDemo.Service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ProductsServiceImpl {
+public class ProductsServiceImpl implements ProductService {
 
     public ProductsRepository productsRepository;
 
@@ -25,6 +26,7 @@ public class ProductsServiceImpl {
         this.productsRepository = productsRepository;
     }
 
+    @Override
     public ResponseEntity<?> getAllProducts(int page, int size) {
 
         Pageable pageable = PageRequest.of(page, size);
@@ -83,7 +85,7 @@ public class ProductsServiceImpl {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+    @Override
     public ResponseEntity<?> getProductByCategory(int page, int size, String category) {
 
         Pageable pageable = PageRequest.of(page, size);
@@ -104,6 +106,7 @@ public class ProductsServiceImpl {
 
     }
 
+    @Override
     public ResponseEntity<?> getProductById(Long productId) throws ProductNotFoundException {
 
         Optional<Products> existingProduct = productsRepository.findById(productId);
@@ -116,7 +119,7 @@ public class ProductsServiceImpl {
 
     }
 
-
+    @Override
     public ResponseEntity<?> getProductsByProductBrand(int page, int size, String productBrands) throws ProductNotFoundException {
 
         Pageable pageable = PageRequest.of(page, size);
@@ -130,7 +133,7 @@ public class ProductsServiceImpl {
 
     }
 
-
+    @Override
     public ResponseEntity<?> addProduct(Products product) throws ProductAlreadyExistException {
 
         if (productsRepository.existsByProductModel(product.getProductModel())) {
@@ -143,11 +146,13 @@ public class ProductsServiceImpl {
 
     }
 
+    @Override
     public ResponseEntity<?> addProducts(List<Products> products) {
         productsRepository.saveAll(products);
         return ResponseEntity.status(HttpStatus.CREATED).body(products);
     }
 
+    @Override
     public ResponseEntity<?> updateProductById(Long productId, Products product) throws ProductNotFoundException, ProductAlreadyExistException {
 
         Optional<Products> existingProduct = productsRepository.findById(productId);
@@ -183,6 +188,25 @@ public class ProductsServiceImpl {
 
     }
 
+    @Override
+    public ResponseEntity<?> updateProductStatus(Long productId, Boolean status) {
+
+        Optional<Products> existingProduct = productsRepository.findById(productId);
+
+            if (existingProduct.isEmpty()) {
+                throw new ProductNotFoundException("Product : " + productId + " not found.");
+            }
+
+        Products updateProductStatus = existingProduct.get();
+            updateProductStatus.setProductStatus(status);
+            productsRepository.save(updateProductStatus);
+            return ResponseEntity.status(HttpStatus.OK).body("Product status : " + productId + " successfully updated");
+
+
+    }
+
+
+    @Override
     public ResponseEntity<?> deleteProductById(Long productId) throws ProductNotFoundException {
 
         Optional<Products> existingProduct = productsRepository.findById(productId);
@@ -195,6 +219,31 @@ public class ProductsServiceImpl {
         return ResponseEntity.status(HttpStatus.OK).body("Product : " + productId + " successfully deleted");
 
     }
+
+
+//    @Override
+//    public ResponseEntity<?> updateStatusForAllProducts() {
+//
+//        List<Products> allProducts = productsRepository.findAll();
+//        boolean availableStatus = true;
+//
+//       try {
+//           for (Products product : allProducts) {
+//
+//                if (product == null) {
+//                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+//                }
+//
+//               product.setProductStatus(availableStatus);
+//           }
+//       } catch (ProductNotFoundException e) {
+//           return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
+//       }
+//
+//        productsRepository.saveAll(allProducts);
+//        return ResponseEntity.status(HttpStatus.OK).body("STATUS TRUE FOR ALL PRODUCTS");
+//
+//    }
 
 
 

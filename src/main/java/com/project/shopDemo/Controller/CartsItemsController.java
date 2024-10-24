@@ -1,7 +1,7 @@
 package com.project.shopDemo.Controller;
 
 import com.project.shopDemo.Entity.CartsItems;
-import com.project.shopDemo.Service.CartsItemsServiceImpl;
+import com.project.shopDemo.Service.Impl.CartsItemsServiceImpl;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

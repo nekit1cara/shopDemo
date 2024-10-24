@@ -1,7 +1,7 @@
 package com.project.shopDemo.Controller;
 
 import com.project.shopDemo.Entity.Clients;
-import com.project.shopDemo.Service.ClientsServiceImpl;
+import com.project.shopDemo.Service.Impl.ClientsServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;

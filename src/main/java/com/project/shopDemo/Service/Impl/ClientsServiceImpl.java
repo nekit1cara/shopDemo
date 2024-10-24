@@ -1,10 +1,11 @@
-package com.project.shopDemo.Service;
+package com.project.shopDemo.Service.Impl;
 
 
 import com.project.shopDemo.Entity.Clients;
 import com.project.shopDemo.ExceptionHandler.Exceptions.ClientAlreadyExistException;
 import com.project.shopDemo.ExceptionHandler.Exceptions.ClientNotFoundException;
 import com.project.shopDemo.Repository.ClientsRepository;
+import com.project.shopDemo.Service.ClientsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,7 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ClientsServiceImpl {
+public class ClientsServiceImpl implements ClientsService {
 
     public ClientsRepository clientsRepository;
 
@@ -27,6 +28,7 @@ public class ClientsServiceImpl {
         this.clientsRepository = clientsRepository;
     }
 
+    @Override
     public ResponseEntity<?> getAllClients(int page, int size, String sortBy) {
 
         Pageable pageable = PageRequest.of(page,size, Sort.by(sortBy));
@@ -36,6 +38,7 @@ public class ClientsServiceImpl {
 
     }
 
+    @Override
     public ResponseEntity<?> getClientById(Long clientId) throws ClientNotFoundException {
 
         Optional<Clients> existingClient = clientsRepository.findById(clientId);
@@ -48,6 +51,7 @@ public class ClientsServiceImpl {
 
     }
 
+    @Override
     public ResponseEntity<?> addClient(Clients client) throws ClientAlreadyExistException {
 
         if (clientsRepository.existsByClientEmail(client.getClientEmail())) {
@@ -59,6 +63,7 @@ public class ClientsServiceImpl {
 
     }
 
+    @Override
     public ResponseEntity<?> addClients(List<Clients> clients) {
 
         clientsRepository.saveAll(clients);
@@ -66,6 +71,7 @@ public class ClientsServiceImpl {
 
     }
 
+    @Override
     public ResponseEntity<?> updateClientById(Long clientId, Clients client) throws ClientNotFoundException, ClientAlreadyExistException {
 
         Optional<Clients> existingClient = clientsRepository.findById(clientId);
@@ -103,6 +109,7 @@ public class ClientsServiceImpl {
 
     }
 
+    @Override
     public ResponseEntity<?> deleteClientById(Long clientId) throws ClientNotFoundException {
 
         Optional<Clients> existingClient = clientsRepository.findById(clientId);

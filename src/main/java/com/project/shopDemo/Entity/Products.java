@@ -25,6 +25,7 @@ public class Products {
     private String productDescription;
     private String productCategory;
     private int productQuantity;
+    private boolean productStatus;
 
 
     @JsonIgnore
