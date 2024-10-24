@@ -20,6 +20,8 @@ public interface OrdersService{
 
     ResponseEntity<?> applyOrder(HttpSession session, Long orderId);
 
+    ResponseEntity<?> deleteOrderById(HttpSession session, Long orderId);
+
     ////////////////////////////////// ///////////////// ///////////////// ///////////////// ///////////////// ///////////////// /////////////////
     List<Orders> getOrders(HttpSession session);
 

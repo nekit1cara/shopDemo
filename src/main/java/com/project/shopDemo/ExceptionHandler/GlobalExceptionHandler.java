@@ -63,6 +63,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
+    //Обработка OrderAlreadyBeAppliedException
+    @ExceptionHandler(OrderAlreadyBeAppliedException.class)
+    public ResponseEntity<String> handleOrderAlreadyBeAppliedException(OrderAlreadyBeAppliedException ex ) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
     // Обработка всех остальных исключений
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleGlobalException(Exception ex ) {

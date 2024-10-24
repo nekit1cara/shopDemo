@@ -2,6 +2,7 @@ package com.project.shopDemo.Service.Impl;
 
 import com.project.shopDemo.Entity.*;
 import com.project.shopDemo.ExceptionHandler.Exceptions.CartNotFoundException;
+import com.project.shopDemo.ExceptionHandler.Exceptions.OrderAlreadyBeAppliedException;
 import com.project.shopDemo.ExceptionHandler.Exceptions.OrderNotFoundException;
 import com.project.shopDemo.Repository.*;
 import com.project.shopDemo.Service.OrdersService;
@@ -125,16 +126,35 @@ public class OrdersServiceImpl implements OrdersService {
     }
 
 
+    @Override
+    public ResponseEntity<?> deleteOrderById(HttpSession session, Long orderId) {
 
+        // Получаем заказ по ID и сессии
+        Optional<Orders> order = getOrder(session, orderId);
 
+            // Если заказ не найден, выбрасываем исключение
+            if (order.isEmpty()) {
+                throw new OrderNotFoundException("Order " + orderId + " not found");
+            }
 
+        // Извлекаем найденный заказ
+        Orders foundedOrder = order.get();
 
+        // Получаем связанные элементы заказа
+        List<OrderItems> itemsInCurrentOrder = foundedOrder.getOrderItems();
 
+            if (foundedOrder.isOrderStatus()) {     //Если статус заказа уже - TRUE
+                throw new OrderAlreadyBeAppliedException("Заказ : " + orderId + " уже подтвержден.");
+            }
 
+            // Удаляем все элементы заказа
+            orderItemsRepository.deleteAll(itemsInCurrentOrder);
+            // Удаляем сам заказ
+            ordersRepository.delete(foundedOrder);
 
-
-
-
+        // Возвращаем успешный ответ
+        return ResponseEntity.status(HttpStatus.OK).body("Order " + orderId + " deleted successfully.");
+    }
 
 
 
